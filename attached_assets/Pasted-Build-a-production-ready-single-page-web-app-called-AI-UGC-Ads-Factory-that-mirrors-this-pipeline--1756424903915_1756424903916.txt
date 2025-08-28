@@ -1,0 +1,134 @@
+Build a production-ready, single-page web app called AI UGC Ads Factory that mirrors this pipeline:
+
+User lands on the site and must first enter a Kie API key in a modal “API key gate.” No other auth. Provide two options:
+
+Use live Kie API (stores key in memory for the session, with a checkbox to “remember in this browser” using localStorage)
+
+Mock mode (no key needed; returns placeholder image/video)
+
+After the key gate, show a two-column layout:
+
+Left: “Configuration” form
+
+Reference image URL input (accepts Google Drive share links; auto-convert to direct download link)
+
+Number of scenes (integer, 1–12)
+
+Dialogue textarea (<= 200 chars; natural, conversational, no salesy tone, use ... for pauses, no em dashes or hyphens)
+
+Model select: veo3_fast (default) or veo3
+
+Aspect ratio – Image: 2:3 (default) or 3:2
+
+Aspect ratio – Video: 9:16 (default) or 16:9
+
+Special requests textarea (age 21–29, diversity of gender/ethnicity, and optional scene hints like podcast, car, mirror, walking, shades, beach, street interview)
+
+Optional product/brand hint (to preserve label text in the image)
+
+Buttons: Generate, Copy prompts JSON
+
+Right: “Scenes & status,” “Generated prompts” preview (JSON), and “Outputs” (per-scene image + video with download)
+
+Prompting rules (must be enforced in the app’s prompt builder):
+
+UGC realism: amateur iPhone vibe, slightly uneven framing, slightly blurry, candid, natural lighting; real imperfections; authentic tone. Always include camera cues like “Casual iPhone selfie,” “Amateur quality phone video.” 
+
+No double quotes in image/video prompts. Keep dialogue casual and under 200 chars, use ... for pauses. 
+
+Scene count: generate exactly the number of scenes requested. For each scene, build:
+
+image_prompt (YAML: emotion, action, character, setting, camera, style)
+
+video_prompt (YAML: dialogue, emotion, voice_type, action, character, setting, camera)
+
+aspect_ratio_image, aspect_ratio_video, model (veo3 or veo3_fast) 
+
+Scene & actor diversity:
+
+Rotate actor descriptors across scenes (gender, ethnicity, hair, age 21–29).
+
+If the Special requests text includes keywords for scenes (podcast, car, mirror selfie, walking, wearing shades, beach, street interview), pick from those; otherwise cycle through them to ensure variety. 
+
+API integration to Kie (mirror this exact contract):
+
+Create Image: POST https://api.kie.ai/api/v1/gpt4o-image/generate
+
+body: { filesUrl: [directImageUrl], prompt, size: “2:3”|“3:2”, nVariants: 1 }
+headers: Authorization: Bearer <KIE_API_KEY>
+
+Poll Image: GET https://api.kie.ai/api/v1/gpt4o-image/record-info?taskId=
+...
+success when data.successFlag === 1; then use data.response.resultUrls[0] as the image URL.
+
+Create Video: POST https://api.kie.ai/api/v1/veo/generate
+
+body: { prompt, model: “veo3”|“veo3_fast”, aspectRatio: “9:16”|“16:9”, imageUrls: "<imageUrl-from-previous-step>" }
+
+Poll Video: GET https://api.kie.ai/api/v1/veo/record-info?taskId=
+...
+success when data.successFlag === 1; then use data.response.resultUrls[0] as the video URL.
+
+Polling cadence: image every ~3s, video every ~5s; give up after ~40 tries for image and ~60 tries for video; surface human-readable errors. These endpoints/fields and successFlag come from the existing workflow. 
+
+Google Drive helper:
+
+If the reference image is a Drive share link like https://drive.google.com/file/d/
+<ID>/view, convert it to https://drive.google.com/uc?export=download&id=
+<ID> before sending to Kie (filesUrl array). 
+
+UX & components:
+
+Modern, minimal UI; TailwindCSS; rounded cards; clear progress states per scene: idle, working (spinner), done, error.
+
+“Scenes & status” card lists each scene with two steps: Create Image, Create Video.
+
+“Generated prompts” shows the exact JSON that would be sent (read-only) and a Copy button.
+
+“Outputs” card shows per-scene image preview and video player with a Download link.
+
+Header includes a Mock mode pill and a toggle to enable/disable it.
+
+Footer note: recommend using a simple proxy server in production to hide API keys; however, for this build, keep all calls client-side as requested.
+
+Non-functional:
+
+TypeScript + React (or Next.js App Router single page).
+
+No server auth; only the API key modal gate at first load.
+
+Keep API key in memory by default; if “remember” is checked, store in localStorage and restore on next visit; allow clearing it.
+
+Defensive error handling and empty-state copy.
+
+Accessibility: semantic HTML, focus states, labels.
+
+Acceptance criteria:
+
+If no API key and Mock mode is off, calls must be blocked until a key is provided.
+
+With Mock mode on, generation produces placeholder image/video but still exercises the full UI flow.
+
+For an input of 3 scenes, the app renders exactly 3 scene cards, builds 3 image prompts and 3 video prompts, polls the Kie APIs, and displays 3 outputs.
+
+Dialogue validation enforces <= 200 chars and no hyphens; if empty, auto-fill with a natural casual line.
+
+Prompts contain UGC camera cues and never include double quotes. 
+
+Provide the builder with example defaults:
+
+Reference image: https://drive.google.com/file/d/1g1rSWs6OgNASMeV8Ejx9fzCVHhnVEOCN/view?usp=sharing
+
+Scenes: 3
+
+Model: veo3_fast
+
+Aspect ratios: 2:3 (image), 9:16 (video)
+
+Sample dialogue: So TikTok made me buy this... and it turns out it's the best tasting fruit beer in Sydney? And they donate their profits to charity! And you know what it's honestly really good! 
+
+Notes for the builder:
+
+The Kie endpoints, polling fields, and successFlag checks must match the existing workflow so outputs align with the current automation. 
+
+The UGC realism rules and scene/array schema must follow the defined system prompt. 
