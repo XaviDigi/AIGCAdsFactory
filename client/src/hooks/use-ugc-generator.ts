@@ -209,7 +209,7 @@ async function processScene(
       updateSceneStatus(sceneIndex, 'imageStatus', 'error');
       updateSceneStatus(sceneIndex, 'videoStatus', 'error');
     }
-    throw error;
+    // Don't re-throw the error to continue with other scenes
   }
 }
 

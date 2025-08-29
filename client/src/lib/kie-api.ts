@@ -93,7 +93,13 @@ export class KieAPI {
     });
 
     if (!response.ok) {
-      throw new Error(`Video generation failed: ${response.statusText}`);
+      const errorText = await response.text();
+      console.error('Video generation API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        errorText
+      });
+      throw new Error(`Video generation failed: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     const data: KieResponse = await response.json();

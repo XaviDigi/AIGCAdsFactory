@@ -15,8 +15,8 @@ export function OutputsPanel() {
     document.body.removeChild(link);
   };
 
-  const completedScenes = scenes.filter(scene => 
-    scene.imageStatus === 'done' && scene.videoStatus === 'done'
+  const scenesWithContent = scenes.filter(scene => 
+    scene.imageStatus === 'done' || scene.videoStatus === 'done'
   );
 
   return (
@@ -29,13 +29,13 @@ export function OutputsPanel() {
       </CardHeader>
       <CardContent>
         <div className="space-y-6" data-testid="outputs-container">
-          {completedScenes.length === 0 ? (
+          {scenesWithContent.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <Clock className="w-8 h-8 mx-auto mb-2" />
               <p>Generated content will appear here after processing</p>
             </div>
           ) : (
-            completedScenes.map((scene, index) => (
+            scenesWithContent.map((scene, index) => (
               <div key={scene.id} className="border border-border rounded-lg p-4">
                 <h4 className="font-medium text-card-foreground mb-3">Scene {scene.id}</h4>
                 
@@ -63,6 +63,14 @@ export function OutputsPanel() {
                         className="w-full rounded-lg border border-border object-cover aspect-[2/3]"
                         data-testid={`img-scene-${scene.id}`}
                       />
+                    ) : scene.imageStatus === 'error' ? (
+                      <div className="w-full rounded-lg border border-destructive bg-destructive/10 aspect-[2/3] flex items-center justify-center">
+                        <div className="text-center text-destructive">
+                          <Clock className="w-8 h-8 mx-auto mb-2" />
+                          <p className="text-sm font-medium">Image Generation Failed</p>
+                          <p className="text-xs">Please try again or contact support</p>
+                        </div>
+                      </div>
                     ) : (
                       <div className="w-full rounded-lg border border-border bg-muted aspect-[2/3] flex items-center justify-center">
                         <div className="text-center text-muted-foreground">
@@ -98,6 +106,14 @@ export function OutputsPanel() {
                         <source src={scene.videoUrl} type="video/mp4" />
                         Your browser does not support the video tag.
                       </video>
+                    ) : scene.videoStatus === 'error' ? (
+                      <div className="w-full rounded-lg border border-destructive bg-destructive/10 aspect-[9/16] flex items-center justify-center">
+                        <div className="text-center text-destructive">
+                          <Play className="w-8 h-8 mx-auto mb-2" />
+                          <p className="text-sm font-medium">Video Generation Failed</p>
+                          <p className="text-xs">Please try again or contact support</p>
+                        </div>
+                      </div>
                     ) : (
                       <div className="w-full rounded-lg border border-border bg-muted aspect-[9/16] flex items-center justify-center">
                         <div className="text-center text-muted-foreground">
