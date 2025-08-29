@@ -14,12 +14,12 @@ interface ConfigurationFormProps {
 }
 
 export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) {
-  const [referenceImage, setReferenceImage] = useState("https://drive.google.com/file/d/1g1rSWs6OgNASMeV8Ejx9fzCVHhnVEOCN/view?usp=sharing");
-  const [sceneCount, setSceneCount] = useState(3);
+  const [referenceImage, setReferenceImage] = useState("");
+  const [sceneCount, setSceneCount] = useState(1);
   const [dialogue, setDialogue] = useState("So TikTok made me buy this... and it turns out it's the best tasting fruit beer in Sydney? And they donate their profits to charity! And you know what it's honestly really good!");
   const [model, setModel] = useState("veo3_fast");
-  const [imageAspectRatio, setImageAspectRatio] = useState("2:3");
-  const [videoAspectRatio, setVideoAspectRatio] = useState("9:16");
+  const [imageAspectRatio, setImageAspectRatio] = useState("3:2");
+  const [videoAspectRatio, setVideoAspectRatio] = useState("16:9");
   const [specialRequests, setSpecialRequests] = useState("");
   const [productHint, setProductHint] = useState("");
 
@@ -47,6 +47,11 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
   const handleGenerate = () => {
     if (dialogue.length > 200) {
       alert('Dialogue must be 200 characters or less');
+      return;
+    }
+    
+    if (!referenceImage.trim()) {
+      alert('Please provide a reference image URL');
       return;
     }
     
@@ -151,8 +156,8 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="2:3">2:3 (Portrait)</SelectItem>
                 <SelectItem value="3:2">3:2 (Landscape)</SelectItem>
+                <SelectItem value="2:3">2:3 (Portrait)</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -164,8 +169,8 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="9:16">9:16 (Mobile)</SelectItem>
                 <SelectItem value="16:9">16:9 (Desktop)</SelectItem>
+                <SelectItem value="9:16">9:16 (Mobile)</SelectItem>
               </SelectContent>
             </Select>
           </div>

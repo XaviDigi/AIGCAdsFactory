@@ -88,7 +88,8 @@ export class KieAPI {
         prompt: request.prompt,
         model: request.model,
         aspectRatio: request.aspectRatio,
-        imageUrls: request.imageUrls
+        imageUrls: [request.imageUrls],
+        enableFallback: true
       })
     });
 
