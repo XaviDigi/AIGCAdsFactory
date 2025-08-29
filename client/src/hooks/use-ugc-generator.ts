@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { buildPrompts } from "@/lib/prompt-builder";
 import { KieAPI } from "@/lib/kie-api";
 import { useToast } from "@/hooks/use-toast";
@@ -44,10 +44,12 @@ export function useUGCStore() {
   
   const rerender = useCallback(() => forceUpdate({}), []);
   
-  useState(() => {
+  useEffect(() => {
     listeners.add(rerender);
-    return () => listeners.delete(rerender);
-  });
+    return () => {
+      listeners.delete(rerender);
+    };
+  }, [rerender]);
 
   return globalStore;
 }
@@ -73,6 +75,7 @@ export function useUGCGenerator(props: UseUGCGeneratorProps) {
         productHint: props.productHint
       });
 
+      console.log('Generated prompts:', prompts);
       updateStore({ prompts });
 
       // Initialize scenes
@@ -153,15 +156,22 @@ async function processScene(
   const sceneId = sceneIndex + 1;
 
   try {
+    console.log(`Processing scene ${sceneId}:`, scenePrompt);
+    
     // Update scene status to working for image
     updateSceneStatus(sceneIndex, 'imageStatus', 'working');
 
+    const imagePromptString = buildImagePromptString(scenePrompt.image_prompt);
+    console.log(`Image prompt for scene ${sceneId}:`, imagePromptString);
+
     // Generate image
     const imageUrl = await kieAPI.generateImage({
-      prompt: buildImagePromptString(scenePrompt.image_prompt),
+      prompt: imagePromptString,
       filesUrl: [referenceImage],
       size: scenePrompt.aspect_ratio_image
     });
+
+    console.log(`Image generated for scene ${sceneId}:`, imageUrl);
 
     updateSceneStatus(sceneIndex, 'imageStatus', 'done');
     updateSceneData(sceneIndex, 'imageUrl', imageUrl);
@@ -169,21 +179,36 @@ async function processScene(
     // Update scene status to working for video
     updateSceneStatus(sceneIndex, 'videoStatus', 'working');
 
+    const videoPromptString = buildVideoPromptString(scenePrompt.video_prompt);
+    console.log(`Video prompt for scene ${sceneId}:`, videoPromptString);
+
     // Generate video
     const videoUrl = await kieAPI.generateVideo({
-      prompt: buildVideoPromptString(scenePrompt.video_prompt),
+      prompt: videoPromptString,
       model: scenePrompt.model,
       aspectRatio: scenePrompt.aspect_ratio_video,
       imageUrls: imageUrl
     });
+
+    console.log(`Video generated for scene ${sceneId}:`, videoUrl);
 
     updateSceneStatus(sceneIndex, 'videoStatus', 'done');
     updateSceneData(sceneIndex, 'videoUrl', videoUrl);
 
   } catch (error) {
     console.error(`Scene ${sceneId} processing failed:`, error);
-    updateSceneStatus(sceneIndex, 'imageStatus', 'error');
-    updateSceneStatus(sceneIndex, 'videoStatus', 'error');
+    const currentScene = globalStore.scenes[sceneIndex];
+    
+    // Only set image to error if it was working, otherwise it might be a video error
+    if (currentScene?.imageStatus === 'working') {
+      updateSceneStatus(sceneIndex, 'imageStatus', 'error');
+    } else if (currentScene?.videoStatus === 'working') {
+      updateSceneStatus(sceneIndex, 'videoStatus', 'error');
+    } else {
+      // If we don't know which step failed, set both to error
+      updateSceneStatus(sceneIndex, 'imageStatus', 'error');
+      updateSceneStatus(sceneIndex, 'videoStatus', 'error');
+    }
     throw error;
   }
 }
