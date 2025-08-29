@@ -63,10 +63,17 @@ export class KieAPI {
     });
 
     if (!response.ok) {
-      throw new Error(`Image generation failed: ${response.statusText}`);
+      const errorText = await response.text();
+      console.error('Image generation API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        errorText
+      });
+      throw new Error(`Image generation failed: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     const data: KieResponse = await response.json();
+    console.log('Generation API response:', data);
     const taskId = data.data.taskId;
 
     // Poll for completion
@@ -104,6 +111,7 @@ export class KieAPI {
     }
 
     const data: KieResponse = await response.json();
+    console.log('Generation API response:', data);
     const taskId = data.data.taskId;
 
     // Poll for completion
@@ -129,8 +137,10 @@ export class KieAPI {
         }
 
         const data: KieStatusResponse = await response.json();
+        console.log('Polling response:', data);
 
         if (data.data.successFlag === 1 && data.data.response?.resultUrls?.[0]) {
+          console.log('Found result URL:', data.data.response.resultUrls[0]);
           return data.data.response.resultUrls[0];
         }
       } catch (error) {
@@ -160,8 +170,10 @@ export class KieAPI {
         }
 
         const data: KieStatusResponse = await response.json();
+        console.log('Polling response:', data);
 
         if (data.data.successFlag === 1 && data.data.response?.resultUrls?.[0]) {
+          console.log('Found result URL:', data.data.response.resultUrls[0]);
           return data.data.response.resultUrls[0];
         }
       } catch (error) {

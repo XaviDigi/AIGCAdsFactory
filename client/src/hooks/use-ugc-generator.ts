@@ -93,7 +93,12 @@ export function useUGCGenerator(props: UseUGCGeneratorProps) {
 
       // Process each scene
       for (let i = 0; i < props.sceneCount; i++) {
-        await processScene(i, prompts.scenes[i], kieAPI, props.referenceImage);
+        try {
+          await processScene(i, prompts.scenes[i], kieAPI, props.referenceImage);
+        } catch (error) {
+          console.error(`Failed to process scene ${i + 1}:`, error);
+          // Continue with other scenes even if one fails
+        }
       }
 
       toast({
