@@ -50,7 +50,7 @@ export function buildPrompts(options: PromptBuilderOptions): UGCPrompts {
     // Use individual dialogues for multiple scenes, or single dialogue for one scene
     const sceneDialogue = options.sceneCount === 1 
       ? options.dialogue 
-      : (options.dialogues[i] || `Dialogue scene ${i + 1}: This is amazing... you have to try this!`);
+      : (options.dialogues[i] || "This is amazing... you have to try this!");
 
     const scene = {
       scene_id: i + 1,

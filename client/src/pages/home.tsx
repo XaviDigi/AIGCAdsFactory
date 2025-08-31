@@ -2,18 +2,18 @@ import { useState, useEffect } from "react";
 import { ApiKeyModal } from "@/components/api-key-modal";
 import { ConfigurationForm } from "@/components/configuration-form";
 import { ScenesStatus } from "@/components/scenes-status";
-import { PromptsPreview } from "@/components/prompts-preview";
 import { OutputsPanel } from "@/components/outputs-panel";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Video, Settings, Circle } from "lucide-react";
+import { Video, Settings, Circle, Sun, Moon } from "lucide-react";
 
 export default function Home() {
   const [apiKey, setApiKey] = useState<string>("");
   const [mockMode, setMockMode] = useState<boolean>(false);
   const [showApiModal, setShowApiModal] = useState<boolean>(true);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
   useEffect(() => {
     // Check for saved API key
@@ -23,7 +23,26 @@ export default function Home() {
       setShowApiModal(false);
       setIsInitialized(true);
     }
+    
+    // Check for saved theme preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
+    }
   }, []);
+
+  const toggleTheme = () => {
+    const newIsDarkMode = !isDarkMode;
+    setIsDarkMode(newIsDarkMode);
+    if (newIsDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
 
   const handleApiKeySubmit = (key: string, remember: boolean, isMock: boolean) => {
     if (isMock) {
@@ -86,7 +105,7 @@ export default function Home() {
           
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <span className="text-sm text-muted-foreground">Mock Mode</span>
+              <span className="text-sm text-muted-foreground">🎭 Mock Mode</span>
               <Switch
                 checked={mockMode}
                 onCheckedChange={handleMockModeToggle}
@@ -97,9 +116,18 @@ export default function Home() {
                 className="flex items-center space-x-1"
               >
                 <Circle className={`w-2 h-2 ${mockMode ? 'text-amber-500' : 'text-green-500'}`} />
-                <span>{mockMode ? 'Mock Mode' : 'Live API'}</span>
+                <span>{mockMode ? '🟡 Mock Mode' : '🟢 Live API'}</span>
               </Badge>
             </div>
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleTheme}
+              data-testid="toggle-theme"
+            >
+              {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </Button>
             
             <Button
               variant="ghost"
@@ -183,7 +211,6 @@ export default function Home() {
         {/* Right Column - Results */}
         <div className="space-y-6">
           <ScenesStatus />
-          <PromptsPreview />
           <OutputsPanel />
         </div>
       </main>

@@ -62,7 +62,7 @@ export function ScenesStatus() {
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground flex items-center">
                 <Image className="w-3 h-3 mr-2" />
-                Create Image
+                🖼️ Create Image
               </span>
               <div className={`px-2 py-1 rounded text-xs font-medium flex items-center space-x-1 transition-all ${getStatusClass(scene?.imageStatus || 'idle')}`}>
                 {getStatusIcon(scene?.imageStatus || 'idle')}
@@ -73,7 +73,7 @@ export function ScenesStatus() {
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground flex items-center">
                 <Video className="w-3 h-3 mr-2" />
-                Create Video
+                🎥 Create Video
               </span>
               <div className={`px-2 py-1 rounded text-xs font-medium flex items-center space-x-1 transition-all ${getStatusClass(scene?.videoStatus || 'idle')}`}>
                 {getStatusIcon(scene?.videoStatus || 'idle')}
@@ -92,7 +92,7 @@ export function ScenesStatus() {
       <CardHeader>
         <CardTitle className="flex items-center">
           <CheckSquare className="text-primary mr-3" />
-          Real-time Generation Status
+          ⚡ Real-time Generation Status
         </CardTitle>
         <p className="text-sm text-muted-foreground">
           Monitor AI processing progress for each scene in real-time

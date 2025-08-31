@@ -24,7 +24,7 @@ export function OutputsPanel() {
       <CardHeader>
         <CardTitle className="flex items-center">
           <Download className="text-primary mr-3" />
-          Generated Assets
+          💾 Generated Assets
         </CardTitle>
         <p className="text-sm text-muted-foreground">
           Download your AI-generated UGC images and videos
@@ -46,7 +46,7 @@ export function OutputsPanel() {
                   {/* Image Output */}
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-card-foreground">Image</span>
+                      <span className="text-sm font-medium text-card-foreground">🖼️ Image</span>
                       {scene.imageUrl && (
                         <Button
                           variant="ghost"
@@ -87,7 +87,7 @@ export function OutputsPanel() {
                   {/* Video Output */}
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-card-foreground">Video</span>
+                      <span className="text-sm font-medium text-card-foreground">🎥 Video</span>
                       {scene.videoUrl && (
                         <Button
                           variant="ghost"

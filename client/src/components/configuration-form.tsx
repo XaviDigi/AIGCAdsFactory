@@ -53,13 +53,27 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
     }
   };
 
+  // Predefined dialogue options for users to choose from
+  const dialogueOptions = [
+    "This is amazing... you have to try this!",
+    "I wasn't expecting this quality for the price!",
+    "My friends are going to love this...",
+    "Okay this might be my new favorite thing",
+    "I can't believe I waited so long to try this",
+    "This is so much better than what I usually get",
+    "You guys need to check this out immediately",
+    "I'm literally obsessed with this now",
+    "This exceeded all my expectations honestly",
+    "Everyone keeps asking me where I got this"
+  ];
+
   // Update dialogues array when scene count changes
   useEffect(() => {
     if (sceneCount > 1) {
       const newDialogues = [...dialogues];
       // Ensure we have enough dialogues
       while (newDialogues.length < sceneCount) {
-        newDialogues.push(`Dialogue scene ${newDialogues.length + 1}: This is amazing... you have to try this!`);
+        newDialogues.push("This is amazing... you have to try this!");
       }
       // Remove excess dialogues
       newDialogues.splice(sceneCount);
@@ -100,7 +114,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
         {/* Reference Image URL */}
         <div>
           <Label htmlFor="referenceImage" className="block text-sm font-medium mb-2">
-            Reference Image URL
+            🖼️ Reference Image URL
           </Label>
           <Input
             id="referenceImage"
@@ -119,7 +133,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
         {/* Number of Scenes */}
         <div>
           <Label htmlFor="sceneCount" className="block text-sm font-medium mb-2">
-            Number of Scenes
+            🎬 Number of Scenes
           </Label>
           <Input
             id="sceneCount"
@@ -139,7 +153,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
             // Single dialogue for 1 scene
             <>
               <Label htmlFor="dialogue" className="block text-sm font-medium mb-2">
-                Dialogue
+                💬 Dialogue
               </Label>
               <Textarea
                 id="dialogue"
@@ -164,26 +178,43 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
           ) : (
             // Multiple dialogues for multiple scenes
             <div className="space-y-4">
-              <Label className="block text-sm font-medium">Dialogues</Label>
+              <Label className="block text-sm font-medium">💬 Dialogues</Label>
               {dialogues.slice(0, sceneCount).map((sceneDialogue, index) => (
                 <div key={index}>
                   <Label htmlFor={`dialogue-${index}`} className="block text-xs font-medium mb-1 text-muted-foreground">
-                    Dialogue Scene {index + 1}
+                    🎬 Scene {index + 1}
                   </Label>
-                  <Textarea
-                    id={`dialogue-${index}`}
-                    rows={2}
-                    maxLength={200}
-                    value={sceneDialogue}
-                    onChange={(e) => handleDialogueChange(e.target.value, index)}
-                    placeholder={`Scene ${index + 1}: Natural, conversational tone...`}
-                    className="resize-none"
-                    data-testid={`textarea-dialogue-${index}`}
-                  />
+                  <div className="space-y-2">
+                    <Select
+                      value={sceneDialogue}
+                      onValueChange={(value) => handleDialogueChange(value, index)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Choose a dialogue script..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {dialogueOptions.map((option, optionIndex) => (
+                          <SelectItem key={optionIndex} value={option}>
+                            {option}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Textarea
+                      id={`dialogue-${index}`}
+                      rows={2}
+                      maxLength={200}
+                      value={sceneDialogue}
+                      onChange={(e) => handleDialogueChange(e.target.value, index)}
+                      placeholder={`Custom dialogue for scene ${index + 1}...`}
+                      className="resize-none"
+                      data-testid={`textarea-dialogue-${index}`}
+                    />
+                  </div>
                   <div className="flex justify-between items-center mt-1">
                     <p className="text-xs text-muted-foreground flex items-center">
                       <MessageSquareMore className="w-3 h-3 mr-1" />
-                      Scene {index + 1} dialogue
+                      📝 Scene {index + 1} dialogue
                     </p>
                     <span className={`text-xs ${sceneDialogue.length > 180 ? 'text-destructive' : 'text-muted-foreground'}`}>
                       {sceneDialogue.length}/200
@@ -197,7 +228,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
 
         {/* Model Selection */}
         <div>
-          <Label className="block text-sm font-medium mb-2">Model</Label>
+          <Label className="block text-sm font-medium mb-2">🤖 AI Model</Label>
           <Select value={model} onValueChange={setModel}>
             <SelectTrigger data-testid="select-model">
               <SelectValue />
@@ -212,7 +243,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
         {/* Aspect Ratios */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label className="block text-sm font-medium mb-2">Image Aspect Ratio</Label>
+            <Label className="block text-sm font-medium mb-2">📐 Image Aspect Ratio</Label>
             <Select value={imageAspectRatio} onValueChange={setImageAspectRatio}>
               <SelectTrigger data-testid="select-image-aspect">
                 <SelectValue />
@@ -225,7 +256,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
           </div>
           
           <div>
-            <Label className="block text-sm font-medium mb-2">Video Aspect Ratio</Label>
+            <Label className="block text-sm font-medium mb-2">📹 Video Aspect Ratio</Label>
             <Select value={videoAspectRatio} onValueChange={setVideoAspectRatio}>
               <SelectTrigger data-testid="select-video-aspect">
                 <SelectValue />
@@ -241,7 +272,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
         {/* Special Requests */}
         <div>
           <Label htmlFor="specialRequests" className="block text-sm font-medium mb-2">
-            Special Requests
+            ✨ Special Requests
           </Label>
           <Textarea
             id="specialRequests"
@@ -261,7 +292,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
         {/* Product/Brand Hint */}
         <div>
           <Label htmlFor="productHint" className="block text-sm font-medium mb-2">
-            Product/Brand Hint
+            🏷️ Product/Brand Hint
           </Label>
           <Input
             id="productHint"

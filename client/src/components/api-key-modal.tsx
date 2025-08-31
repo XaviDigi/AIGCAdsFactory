@@ -27,7 +27,7 @@ export function ApiKeyModal({ open, onSubmit }: ApiKeyModalProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={() => {}}>
+    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onSubmit("", false, true); }}>
       <DialogContent className="w-full max-w-md mx-4">
         <DialogHeader>
           <DialogTitle className="flex items-center">
