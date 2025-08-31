@@ -24,6 +24,35 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
   const [specialRequests, setSpecialRequests] = useState("");
   const [productHint, setProductHint] = useState("");
 
+  // Load saved values from localStorage on component mount
+  useEffect(() => {
+    const savedDialogue = localStorage.getItem('ugc-dialogue');
+    const savedSpecialRequests = localStorage.getItem('ugc-special-requests');
+    const savedProductHint = localStorage.getItem('ugc-product-hint');
+    
+    if (savedDialogue) setDialogue(savedDialogue);
+    if (savedSpecialRequests) setSpecialRequests(savedSpecialRequests);
+    if (savedProductHint) setProductHint(savedProductHint);
+  }, []);
+
+  // Save to localStorage when values change
+  const handleDialogueUpdate = (value: string, index?: number) => {
+    handleDialogueChange(value, index);
+    if (sceneCount === 1 || index === undefined) {
+      localStorage.setItem('ugc-dialogue', value);
+    }
+  };
+
+  const handleSpecialRequestsUpdate = (value: string) => {
+    setSpecialRequests(value);
+    localStorage.setItem('ugc-special-requests', value);
+  };
+
+  const handleProductHintUpdate = (value: string) => {
+    setProductHint(value);
+    localStorage.setItem('ugc-product-hint', value);
+  };
+
   const { generateScenes, copyPromptsJSON, isGenerating } = useUGCGenerator({
     apiKey,
     mockMode,
@@ -160,7 +189,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
                 rows={3}
                 maxLength={200}
                 value={dialogue}
-                onChange={(e) => handleDialogueChange(e.target.value)}
+                onChange={(e) => handleDialogueUpdate(e.target.value)}
                 placeholder="Natural, conversational tone. Use ... for pauses."
                 className="resize-none"
                 data-testid="textarea-dialogue"
@@ -187,7 +216,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
                   <div className="space-y-2">
                     <Select
                       value={sceneDialogue}
-                      onValueChange={(value) => handleDialogueChange(value, index)}
+                      onValueChange={(value) => handleDialogueUpdate(value, index)}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Choose a dialogue script..." />
@@ -205,7 +234,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
                       rows={2}
                       maxLength={200}
                       value={sceneDialogue}
-                      onChange={(e) => handleDialogueChange(e.target.value, index)}
+                      onChange={(e) => handleDialogueUpdate(e.target.value, index)}
                       placeholder={`Custom dialogue for scene ${index + 1}...`}
                       className="resize-none"
                       data-testid={`textarea-dialogue-${index}`}
@@ -278,7 +307,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
             id="specialRequests"
             rows={3}
             value={specialRequests}
-            onChange={(e) => setSpecialRequests(e.target.value)}
+            onChange={(e) => handleSpecialRequestsUpdate(e.target.value)}
             placeholder="Age 21-29, diversity preferences, scene hints (podcast, car, mirror, walking, shades, beach, street interview)"
             className="resize-none"
             data-testid="textarea-special-requests"
@@ -297,7 +326,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
           <Input
             id="productHint"
             value={productHint}
-            onChange={(e) => setProductHint(e.target.value)}
+            onChange={(e) => handleProductHintUpdate(e.target.value)}
             placeholder="Optional: preserve specific text or branding in images"
             data-testid="input-product-hint"
           />

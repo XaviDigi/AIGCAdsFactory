@@ -3,11 +3,11 @@ import { ApiKeyModal } from "@/components/api-key-modal";
 import { ConfigurationForm } from "@/components/configuration-form";
 import { ScenesStatus } from "@/components/scenes-status";
 import { OutputsPanel } from "@/components/outputs-panel";
-import { CreditInfo } from "@/components/credit-info";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Video, Settings, Circle, Sun, Moon } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Video, Settings, Circle, Sun, Moon, Copy } from "lucide-react";
 
 export default function Home() {
   const [apiKey, setApiKey] = useState<string>("");
@@ -17,6 +17,7 @@ export default function Home() {
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
   const [sceneCount, setSceneCount] = useState<number>(1);
   const [model, setModel] = useState<string>("veo3_fast");
+  const { toast } = useToast();
 
   useEffect(() => {
     // Check for saved API key
@@ -190,39 +191,73 @@ export default function Home() {
           <div className="bg-accent/30 border border-border rounded-lg p-4">
             <h3 className="font-semibold text-card-foreground mb-3 flex items-center">
               <Video className="w-4 h-4 mr-2 text-primary" />
-              Usage Examples
+              💡 Usage Examples
             </h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-start space-x-2">
-                <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                <p className="text-muted-foreground">
-                  <span className="font-medium text-card-foreground">Product Launch:</span> Upload product image + "Just tried this new energy drink and wow..."
-                </p>
-              </div>
-              <div className="flex items-start space-x-2">
-                <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                <p className="text-muted-foreground">
-                  <span className="font-medium text-card-foreground">Food & Beverage:</span> Restaurant dish + "This place is hidden gem in downtown..."
-                </p>
-              </div>
-              <div className="flex items-start space-x-2">
-                <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                <p className="text-muted-foreground">
-                  <span className="font-medium text-card-foreground">Fashion:</span> Clothing item + "Found this at the thrift store and it's perfect..."
-                </p>
-              </div>
+            <div className="space-y-3 text-sm">
+              {[
+                {
+                  category: "🚀 Product Launch",
+                  dialogue: "Just tried this new energy drink and WOW... the taste is incredible and I'm actually focused for once!"
+                },
+                {
+                  category: "🍽️ Food & Beverage", 
+                  dialogue: "This place is a hidden gem in downtown... their pasta is literally life-changing!"
+                },
+                {
+                  category: "👕 Fashion",
+                  dialogue: "Found this at the thrift store and it's perfect... everyone keeps asking where I got it!"
+                },
+                {
+                  category: "💄 Beauty Products",
+                  dialogue: "I wasn't expecting this skincare routine to work this fast... my skin is glowing!"
+                },
+                {
+                  category: "🎮 Tech & Gadgets",
+                  dialogue: "This wireless charger is a game changer... no more tangled cables everywhere!"
+                },
+                {
+                  category: "🏠 Home & Lifestyle",
+                  dialogue: "This candle has been burning for 6 hours and still smells amazing... obsessed!"
+                },
+                {
+                  category: "🎯 Fitness",
+                  dialogue: "This protein powder actually tastes good AND mixes well... finally found the one!"
+                },
+                {
+                  category: "📱 Apps & Services",
+                  dialogue: "This app saved me 3 hours of work today... productivity level unlocked!"
+                }
+              ].map((example, index) => (
+                <div key={index} className="bg-background/50 rounded-lg p-3 border border-border/30">
+                  <div className="flex items-start justify-between space-x-2">
+                    <div className="flex-1">
+                      <p className="font-medium text-card-foreground mb-1">{example.category}</p>
+                      <p className="text-muted-foreground text-xs">{example.dialogue}</p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        navigator.clipboard.writeText(example.dialogue);
+                        toast({
+                          title: "📋 Copied!",
+                          description: "Dialogue copied to clipboard"
+                        });
+                      }}
+                      className="h-6 w-6 p-0 flex-shrink-0"
+                      data-testid={`copy-example-${index}`}
+                    >
+                      <Copy className="w-3 h-3" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
         {/* Right Column - Results */}
         <div className="space-y-6">
-          <CreditInfo 
-            apiKey={apiKey} 
-            mockMode={mockMode} 
-            sceneCount={sceneCount} 
-            model={model}
-          />
           <ScenesStatus />
           <OutputsPanel />
         </div>

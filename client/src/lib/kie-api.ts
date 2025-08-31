@@ -56,7 +56,7 @@ export class KieAPI {
     // Convert Google Drive URLs
     const processedUrls = request.filesUrl.map(url => convertGoogleDriveUrl(url));
 
-    const response = await fetch(`${this.baseUrl}/nano-banana/generate`, {
+    const response = await fetch(`${this.baseUrl}/gpt4o-image/generate`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${this.apiKey}`,
@@ -134,7 +134,7 @@ export class KieAPI {
       await new Promise(resolve => setTimeout(resolve, pollInterval));
 
       try {
-        const response = await fetch(`${this.baseUrl}/nano-banana/record-info?taskId=${taskId}`, {
+        const response = await fetch(`${this.baseUrl}/gpt4o-image/record-info?taskId=${taskId}`, {
           headers: {
             'Authorization': `Bearer ${this.apiKey}`
           }
