@@ -17,6 +17,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
   const [referenceImage, setReferenceImage] = useState("");
   const [sceneCount, setSceneCount] = useState(1);
   const [dialogue, setDialogue] = useState("So TikTok made me buy this... and it turns out it's the best tasting fruit beer in Sydney? And they donate their profits to charity! And you know what it's honestly really good!");
+  const [dialogues, setDialogues] = useState<string[]>(["So TikTok made me buy this... and it turns out it's the best tasting fruit beer in Sydney? And they donate their profits to charity! And you know what it's honestly really good!"]);
   const [model, setModel] = useState("veo3_fast");
   const [imageAspectRatio, setImageAspectRatio] = useState("3:2");
   const [videoAspectRatio, setVideoAspectRatio] = useState("16:9");
@@ -28,7 +29,8 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
     mockMode,
     sceneCount,
     referenceImage,
-    dialogue,
+    dialogue: sceneCount === 1 ? dialogue : '',
+    dialogues: sceneCount > 1 ? dialogues : [dialogue],
     model,
     imageAspectRatio,
     videoAspectRatio,
@@ -36,13 +38,34 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
     productHint
   });
 
-  const handleDialogueChange = (value: string) => {
+  const handleDialogueChange = (value: string, index?: number) => {
     // Validate no hyphens or em dashes
     if (value.includes('-') || value.includes('—')) {
       return;
     }
-    setDialogue(value);
+    
+    if (sceneCount === 1 || index === undefined) {
+      setDialogue(value);
+    } else {
+      const newDialogues = [...dialogues];
+      newDialogues[index] = value;
+      setDialogues(newDialogues);
+    }
   };
+
+  // Update dialogues array when scene count changes
+  useEffect(() => {
+    if (sceneCount > 1) {
+      const newDialogues = [...dialogues];
+      // Ensure we have enough dialogues
+      while (newDialogues.length < sceneCount) {
+        newDialogues.push(`Dialogue scene ${newDialogues.length + 1}: This is amazing... you have to try this!`);
+      }
+      // Remove excess dialogues
+      newDialogues.splice(sceneCount);
+      setDialogues(newDialogues);
+    }
+  }, [sceneCount]);
 
   const handleGenerate = () => {
     if (dialogue.length > 200) {
@@ -63,12 +86,15 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
   };
 
   return (
-    <Card>
+    <Card className="backdrop-blur-sm bg-card/80 border-border/50">
       <CardHeader>
         <CardTitle className="flex items-center">
           <Sliders className="text-primary mr-3" />
-          Configuration
+          AI Generation Settings
         </CardTitle>
+        <p className="text-sm text-muted-foreground">
+          Configure your UGC campaign parameters for authentic, diverse content generation
+        </p>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Reference Image URL */}
@@ -107,30 +133,66 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
           <p className="text-xs text-muted-foreground mt-1">1-12 scenes</p>
         </div>
 
-        {/* Dialogue */}
+        {/* Dialogue(s) */}
         <div>
-          <Label htmlFor="dialogue" className="block text-sm font-medium mb-2">
-            Dialogue
-          </Label>
-          <Textarea
-            id="dialogue"
-            rows={3}
-            maxLength={200}
-            value={dialogue}
-            onChange={(e) => handleDialogueChange(e.target.value)}
-            placeholder="Natural, conversational tone. Use ... for pauses."
-            className="resize-none"
-            data-testid="textarea-dialogue"
-          />
-          <div className="flex justify-between items-center mt-1">
-            <p className="text-xs text-muted-foreground flex items-center">
-              <MessageSquareMore className="w-3 h-3 mr-1" />
-              Natural, conversational tone. No hyphens or em dashes.
-            </p>
-            <span className={`text-xs ${dialogue.length > 180 ? 'text-destructive' : 'text-muted-foreground'}`}>
-              {dialogue.length}/200
-            </span>
-          </div>
+          {sceneCount === 1 ? (
+            // Single dialogue for 1 scene
+            <>
+              <Label htmlFor="dialogue" className="block text-sm font-medium mb-2">
+                Dialogue
+              </Label>
+              <Textarea
+                id="dialogue"
+                rows={3}
+                maxLength={200}
+                value={dialogue}
+                onChange={(e) => handleDialogueChange(e.target.value)}
+                placeholder="Natural, conversational tone. Use ... for pauses."
+                className="resize-none"
+                data-testid="textarea-dialogue"
+              />
+              <div className="flex justify-between items-center mt-1">
+                <p className="text-xs text-muted-foreground flex items-center">
+                  <MessageSquareMore className="w-3 h-3 mr-1" />
+                  Natural, conversational tone. No hyphens or em dashes.
+                </p>
+                <span className={`text-xs ${dialogue.length > 180 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                  {dialogue.length}/200
+                </span>
+              </div>
+            </>
+          ) : (
+            // Multiple dialogues for multiple scenes
+            <div className="space-y-4">
+              <Label className="block text-sm font-medium">Dialogues</Label>
+              {dialogues.slice(0, sceneCount).map((sceneDialogue, index) => (
+                <div key={index}>
+                  <Label htmlFor={`dialogue-${index}`} className="block text-xs font-medium mb-1 text-muted-foreground">
+                    Dialogue Scene {index + 1}
+                  </Label>
+                  <Textarea
+                    id={`dialogue-${index}`}
+                    rows={2}
+                    maxLength={200}
+                    value={sceneDialogue}
+                    onChange={(e) => handleDialogueChange(e.target.value, index)}
+                    placeholder={`Scene ${index + 1}: Natural, conversational tone...`}
+                    className="resize-none"
+                    data-testid={`textarea-dialogue-${index}`}
+                  />
+                  <div className="flex justify-between items-center mt-1">
+                    <p className="text-xs text-muted-foreground flex items-center">
+                      <MessageSquareMore className="w-3 h-3 mr-1" />
+                      Scene {index + 1} dialogue
+                    </p>
+                    <span className={`text-xs ${sceneDialogue.length > 180 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                      {sceneDialogue.length}/200
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Model Selection */}

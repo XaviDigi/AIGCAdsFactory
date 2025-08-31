@@ -88,12 +88,15 @@ export function ScenesStatus() {
   };
 
   return (
-    <Card>
+    <Card className="backdrop-blur-sm bg-card/80 border-border/50">
       <CardHeader>
         <CardTitle className="flex items-center">
           <CheckSquare className="text-primary mr-3" />
-          Scenes & Status
+          Real-time Generation Status
         </CardTitle>
+        <p className="text-sm text-muted-foreground">
+          Monitor AI processing progress for each scene in real-time
+        </p>
       </CardHeader>
       <CardContent>
         <div className="space-y-4" data-testid="scenes-status-container">

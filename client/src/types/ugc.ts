@@ -42,6 +42,7 @@ export interface GenerationConfig {
   referenceImage: string;
   sceneCount: number;
   dialogue: string;
+  dialogues: string[]; // Array of dialogues for multiple scenes
   model: 'veo3_fast' | 'veo3';
   imageAspectRatio: '2:3' | '3:2';
   videoAspectRatio: '9:16' | '16:9';

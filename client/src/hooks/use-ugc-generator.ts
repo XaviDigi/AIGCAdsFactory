@@ -10,6 +10,7 @@ interface UseUGCGeneratorProps {
   sceneCount: number;
   referenceImage: string;
   dialogue: string;
+  dialogues: string[];
   model: string;
   imageAspectRatio: string;
   videoAspectRatio: string;
@@ -68,6 +69,7 @@ export function useUGCGenerator(props: UseUGCGeneratorProps) {
       const prompts = buildPrompts({
         sceneCount: props.sceneCount,
         dialogue: props.dialogue,
+        dialogues: props.dialogues,
         model: props.model,
         imageAspectRatio: props.imageAspectRatio,
         videoAspectRatio: props.videoAspectRatio,
@@ -123,6 +125,7 @@ export function useUGCGenerator(props: UseUGCGeneratorProps) {
       const prompts = buildPrompts({
         sceneCount: props.sceneCount,
         dialogue: props.dialogue,
+        dialogues: props.dialogues,
         model: props.model,
         imageAspectRatio: props.imageAspectRatio,
         videoAspectRatio: props.videoAspectRatio,

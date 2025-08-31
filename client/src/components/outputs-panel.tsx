@@ -20,12 +20,15 @@ export function OutputsPanel() {
   );
 
   return (
-    <Card>
+    <Card className="backdrop-blur-sm bg-card/80 border-border/50">
       <CardHeader>
         <CardTitle className="flex items-center">
           <Download className="text-primary mr-3" />
-          Outputs
+          Generated Assets
         </CardTitle>
+        <p className="text-sm text-muted-foreground">
+          Download your AI-generated UGC images and videos
+        </p>
       </CardHeader>
       <CardContent>
         <div className="space-y-6" data-testid="outputs-container">

@@ -63,12 +63,25 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Hero Banner */}
+      <div className="bg-gradient-to-r from-primary/20 via-accent to-primary/20 border-b border-border">
+        <div className="max-w-7xl mx-auto px-6 py-8 text-center">
+          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mb-2">
+            UGC on the go
+          </h1>
+          <p className="text-lg text-muted-foreground mb-1">by Xavi Digi</p>
+          <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
+            Create authentic user-generated content advertisements with AI. Transform reference images into multiple diverse scenes with authentic iPhone aesthetics and natural dialogue.
+          </p>
+        </div>
+      </div>
+
       {/* Header */}
       <header className="bg-card border-b border-border px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Video className="text-primary text-2xl" />
-            <h1 className="text-2xl font-bold text-card-foreground">AI UGC Ads Factory</h1>
+            <h1 className="text-xl font-semibold text-card-foreground">AI UGC Ads Factory</h1>
           </div>
           
           <div className="flex items-center space-x-4">
@@ -100,6 +113,35 @@ export default function Home() {
         </div>
       </header>
 
+      {/* AI Features Overview */}
+      <section className="bg-card/50 border-y border-border py-6">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+            <div className="space-y-2">
+              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto">
+                <Video className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="font-semibold text-card-foreground">AI-Powered Generation</h3>
+              <p className="text-sm text-muted-foreground">Advanced VEO3 models create authentic UGC-style content</p>
+            </div>
+            <div className="space-y-2">
+              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto">
+                <Video className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="font-semibold text-card-foreground">Diverse Actors</h3>
+              <p className="text-sm text-muted-foreground">Automatically generates diverse, authentic-looking people</p>
+            </div>
+            <div className="space-y-2">
+              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto">
+                <Video className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="font-semibold text-card-foreground">iPhone Aesthetics</h3>
+              <p className="text-sm text-muted-foreground">Amateur iPhone quality with natural imperfections</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left Column - Configuration */}
@@ -108,6 +150,34 @@ export default function Home() {
             apiKey={apiKey}
             mockMode={mockMode}
           />
+          
+          {/* Usage Examples */}
+          <div className="bg-accent/30 border border-border rounded-lg p-4">
+            <h3 className="font-semibold text-card-foreground mb-3 flex items-center">
+              <Video className="w-4 h-4 mr-2 text-primary" />
+              Usage Examples
+            </h3>
+            <div className="space-y-2 text-sm">
+              <div className="flex items-start space-x-2">
+                <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                <p className="text-muted-foreground">
+                  <span className="font-medium text-card-foreground">Product Launch:</span> Upload product image + "Just tried this new energy drink and wow..."
+                </p>
+              </div>
+              <div className="flex items-start space-x-2">
+                <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                <p className="text-muted-foreground">
+                  <span className="font-medium text-card-foreground">Food & Beverage:</span> Restaurant dish + "This place is hidden gem in downtown..."
+                </p>
+              </div>
+              <div className="flex items-start space-x-2">
+                <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                <p className="text-muted-foreground">
+                  <span className="font-medium text-card-foreground">Fashion:</span> Clothing item + "Found this at the thrift store and it's perfect..."
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Right Column - Results */}

@@ -3,6 +3,7 @@ import type { UGCPrompts } from "@/types/ugc";
 interface PromptBuilderOptions {
   sceneCount: number;
   dialogue: string;
+  dialogues: string[];
   model: string;
   imageAspectRatio: string;
   videoAspectRatio: string;
@@ -46,10 +47,10 @@ export function buildPrompts(options: PromptBuilderOptions): UGCPrompts {
       ? sceneHints[i % sceneHints.length] 
       : sceneSettings[i % sceneSettings.length];
 
-    // Split dialogue across scenes if multiple scenes
+    // Use individual dialogues for multiple scenes, or single dialogue for one scene
     const sceneDialogue = options.sceneCount === 1 
       ? options.dialogue 
-      : getDialogueSegment(options.dialogue, i, options.sceneCount);
+      : (options.dialogues[i] || `Dialogue scene ${i + 1}: This is amazing... you have to try this!`);
 
     const scene = {
       scene_id: i + 1,
