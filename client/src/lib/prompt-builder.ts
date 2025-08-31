@@ -57,9 +57,9 @@ export function buildPrompts(options: PromptBuilderOptions): UGCPrompts {
       image_prompt: {
         emotion: getRandomEmotion(),
         action: getSceneAction(i),
-        character: `Young ${actor.gender}, ${actor.age}, ${actor.hair} hair, ${actor.ethnicity}, casual iPhone selfie`,
+        character: `Young ${actor.gender}, ${actor.age}, ${actor.hair} hair, ${actor.ethnicity}, casual mobile selfie`,
         setting: setting,
-        camera: "Amateur iPhone front camera, slightly off-center framing, casual handheld",
+        camera: "Amateur mobile front camera, slightly off-center framing, casual handheld",
         style: "UGC realism, authentic imperfections, natural lighting, slightly blurry amateur quality"
       },
       video_prompt: {
@@ -69,7 +69,7 @@ export function buildPrompts(options: PromptBuilderOptions): UGCPrompts {
         action: getVideoAction(i),
         character: `Same as image - Young ${actor.gender}, ${actor.age}, ${actor.ethnicity}`,
         setting: `Same as image - ${setting}`,
-        camera: "Handheld phone video, natural movement, amateur iPhone quality"
+        camera: "Handheld phone video, natural movement, amateur mobile quality"
       },
       aspect_ratio_image: options.imageAspectRatio,
       aspect_ratio_video: options.videoAspectRatio,

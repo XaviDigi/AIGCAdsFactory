@@ -23,6 +23,7 @@ interface UGCStore {
   prompts: UGCPrompts | null;
   sceneCount: number;
   isGenerating: boolean;
+  creditBalance: number | null;
 }
 
 // Global store state
@@ -30,7 +31,8 @@ let globalStore: UGCStore = {
   scenes: [],
   prompts: null,
   sceneCount: 1,
-  isGenerating: false
+  isGenerating: false,
+  creditBalance: null
 };
 
 const listeners = new Set<() => void>();
@@ -148,10 +150,23 @@ export function useUGCGenerator(props: UseUGCGeneratorProps) {
     }
   }, [props, toast]);
 
+  const fetchCreditBalance = useCallback(async () => {
+    try {
+      const balance = await kieAPI.getCreditBalance();
+      updateStore({ creditBalance: balance });
+      return balance;
+    } catch (error) {
+      console.error('Failed to fetch credit balance:', error);
+      return null;
+    }
+  }, [kieAPI]);
+
   return {
     generateScenes,
     copyPromptsJSON,
-    isGenerating: globalStore.isGenerating
+    fetchCreditBalance,
+    isGenerating: globalStore.isGenerating,
+    creditBalance: globalStore.creditBalance
   };
 }
 

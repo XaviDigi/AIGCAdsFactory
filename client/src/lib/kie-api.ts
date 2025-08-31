@@ -30,6 +30,14 @@ interface KieStatusResponse {
   };
 }
 
+interface KieCreditResponse {
+  code: number;
+  message: string;
+  data: {
+    credits: number;
+  };
+}
+
 export class KieAPI {
   private apiKey: string;
   private mockMode: boolean;
@@ -48,7 +56,7 @@ export class KieAPI {
     // Convert Google Drive URLs
     const processedUrls = request.filesUrl.map(url => convertGoogleDriveUrl(url));
 
-    const response = await fetch(`${this.baseUrl}/gpt4o-image/generate`, {
+    const response = await fetch(`${this.baseUrl}/nano-banana/generate`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${this.apiKey}`,
@@ -126,7 +134,7 @@ export class KieAPI {
       await new Promise(resolve => setTimeout(resolve, pollInterval));
 
       try {
-        const response = await fetch(`${this.baseUrl}/gpt4o-image/record-info?taskId=${taskId}`, {
+        const response = await fetch(`${this.baseUrl}/nano-banana/record-info?taskId=${taskId}`, {
           headers: {
             'Authorization': `Bearer ${this.apiKey}`
           }
@@ -198,5 +206,52 @@ export class KieAPI {
     
     // Return a placeholder video URL
     return `https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4?seed=${Math.random()}`;
+  }
+
+  async getCreditBalance(): Promise<number> {
+    if (this.mockMode) {
+      // Return mock credit balance
+      return 2500;
+    }
+
+    try {
+      const response = await fetch(`${this.baseUrl}/account/credits`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        console.error('Credit balance fetch failed:', response.status, response.statusText);
+        return 0;
+      }
+
+      const data: KieCreditResponse = await response.json();
+      return data.data.credits;
+    } catch (error) {
+      console.error('Error fetching credit balance:', error);
+      return 0;
+    }
+  }
+
+  // Cost estimation based on Kie.ai pricing
+  static getEstimatedCosts(sceneCount: number, model: string): { image: number; video: number; total: number } {
+    // Image generation cost (estimated)
+    const imageCostPerScene = 50; // credits per image
+    
+    // Video generation costs based on model
+    const videoCostPerScene = model === 'veo3_fast' ? 80 : 400; // credits per video
+    
+    const imageCost = sceneCount * imageCostPerScene;
+    const videoCost = sceneCount * videoCostPerScene;
+    const totalCost = imageCost + videoCost;
+    
+    return {
+      image: imageCost,
+      video: videoCost,
+      total: totalCost
+    };
   }
 }

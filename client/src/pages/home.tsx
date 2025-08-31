@@ -3,6 +3,7 @@ import { ApiKeyModal } from "@/components/api-key-modal";
 import { ConfigurationForm } from "@/components/configuration-form";
 import { ScenesStatus } from "@/components/scenes-status";
 import { OutputsPanel } from "@/components/outputs-panel";
+import { CreditInfo } from "@/components/credit-info";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +15,8 @@ export default function Home() {
   const [showApiModal, setShowApiModal] = useState<boolean>(true);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  const [sceneCount, setSceneCount] = useState<number>(1);
+  const [model, setModel] = useState<string>("veo3_fast");
 
   useEffect(() => {
     // Check for saved API key
@@ -90,7 +93,7 @@ export default function Home() {
           </h1>
           <p className="text-lg text-muted-foreground mb-1">by Xavi Digi</p>
           <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-            Create authentic user-generated content advertisements with AI. Transform reference images into multiple diverse scenes with authentic iPhone aesthetics and natural dialogue.
+            Create authentic user-generated content advertisements with AI. Transform reference images into multiple diverse scenes with authentic mobile aesthetics and natural dialogue.
           </p>
         </div>
       </div>
@@ -163,8 +166,8 @@ export default function Home() {
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto">
                 <Video className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="font-semibold text-card-foreground">iPhone Aesthetics</h3>
-              <p className="text-sm text-muted-foreground">Amateur iPhone quality with natural imperfections</p>
+              <h3 className="font-semibold text-card-foreground">📱 Mobile Aesthetics</h3>
+              <p className="text-sm text-muted-foreground">Amateur mobile quality with natural imperfections</p>
             </div>
           </div>
         </div>
@@ -177,6 +180,10 @@ export default function Home() {
           <ConfigurationForm 
             apiKey={apiKey}
             mockMode={mockMode}
+            sceneCount={sceneCount}
+            setSceneCount={setSceneCount}
+            model={model}
+            setModel={setModel}
           />
           
           {/* Usage Examples */}
@@ -210,6 +217,12 @@ export default function Home() {
 
         {/* Right Column - Results */}
         <div className="space-y-6">
+          <CreditInfo 
+            apiKey={apiKey} 
+            mockMode={mockMode} 
+            sceneCount={sceneCount} 
+            model={model}
+          />
           <ScenesStatus />
           <OutputsPanel />
         </div>

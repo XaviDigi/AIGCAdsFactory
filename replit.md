@@ -2,7 +2,7 @@
 
 ## Overview
 
-AI UGC Ads Factory is a production-ready single-page web application that generates authentic user-generated content (UGC) style advertisements using AI. The application allows users to create multiple scenes with realistic amateur iPhone aesthetics, featuring diverse actors and natural dialogue. Users can input reference images, configure scene parameters, and generate both images and videos with UGC-style prompts that emphasize authenticity and relatability.
+AI UGC Ads Factory is a production-ready single-page web application that generates authentic user-generated content (UGC) style advertisements using AI. The application allows users to create multiple scenes with realistic amateur mobile aesthetics, featuring diverse actors and natural dialogue. Users can input reference images, configure scene parameters, and generate both images and videos with UGC-style prompts that emphasize authenticity and relatability.
 
 ## User Preferences
 
