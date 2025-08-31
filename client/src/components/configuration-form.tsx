@@ -19,6 +19,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
   const [dialogue, setDialogue] = useState("So TikTok made me buy this... and it turns out it's the best tasting fruit beer in Sydney? And they donate their profits to charity! And you know what it's honestly really good!");
   const [dialogues, setDialogues] = useState<string[]>(["So TikTok made me buy this... and it turns out it's the best tasting fruit beer in Sydney? And they donate their profits to charity! And you know what it's honestly really good!"]);
   const [model, setModel] = useState("veo3_fast");
+  const [imageModel, setImageModel] = useState("gpt4o-image");
   const [imageAspectRatio, setImageAspectRatio] = useState("3:2");
   const [videoAspectRatio, setVideoAspectRatio] = useState("16:9");
   const [specialRequests, setSpecialRequests] = useState("");
@@ -61,6 +62,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
     dialogue: sceneCount === 1 ? dialogue : '',
     dialogues: sceneCount > 1 ? dialogues : [dialogue],
     model,
+    imageModel,
     imageAspectRatio,
     videoAspectRatio,
     specialRequests,
@@ -256,17 +258,31 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
         </div>
 
         {/* Model Selection */}
-        <div>
-          <Label className="block text-sm font-medium mb-2">🤖 AI Model</Label>
-          <Select value={model} onValueChange={setModel}>
-            <SelectTrigger data-testid="select-model">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="veo3_fast">veo3_fast (Recommended)</SelectItem>
-              <SelectItem value="veo3">veo3 (Higher Quality)</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label className="block text-sm font-medium mb-2">🎥 Video Model</Label>
+            <Select value={model} onValueChange={setModel}>
+              <SelectTrigger data-testid="select-video-model">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="veo3_fast">veo3_fast (Recommended)</SelectItem>
+                <SelectItem value="veo3">veo3 (Higher Quality)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className="block text-sm font-medium mb-2">🖼️ Image Model</Label>
+            <Select value={imageModel} onValueChange={setImageModel}>
+              <SelectTrigger data-testid="select-image-model">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="gpt4o-image">4o Image (Recommended)</SelectItem>
+                <SelectItem value="flux-kontext">Flux Kontext</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {/* Aspect Ratios */}

@@ -5,6 +5,7 @@ interface PromptBuilderOptions {
   dialogue: string;
   dialogues: string[];
   model: string;
+  imageModel: string;
   imageAspectRatio: string;
   videoAspectRatio: string;
   specialRequests: string;
@@ -38,11 +39,12 @@ export function buildPrompts(options: PromptBuilderOptions): UGCPrompts {
     { gender: "man", ethnicity: "Mixed race", hair: "short fade", age: 29 }
   ];
 
-  // Parse special requests for scene hints
+  // Parse special requests for scene hints and character overrides
   const sceneHints = extractSceneHints(options.specialRequests);
+  const characterOverride = extractCharacterOverride(options.specialRequests);
   
   for (let i = 0; i < options.sceneCount; i++) {
-    const actor = actorDescriptors[i % actorDescriptors.length];
+    const actor = characterOverride || actorDescriptors[i % actorDescriptors.length];
     const setting = sceneHints.length > 0 
       ? sceneHints[i % sceneHints.length] 
       : sceneSettings[i % sceneSettings.length];
@@ -73,7 +75,8 @@ export function buildPrompts(options: PromptBuilderOptions): UGCPrompts {
       },
       aspect_ratio_image: options.imageAspectRatio,
       aspect_ratio_video: options.videoAspectRatio,
-      model: options.model
+      model: options.model,
+      imageModel: options.imageModel
     };
 
     // Add product hint if provided
@@ -103,6 +106,81 @@ function extractSceneHints(specialRequests: string): string[] {
   return hints;
 }
 
+function extractCharacterOverride(specialRequests: string): any | null {
+  const requests = specialRequests.toLowerCase();
+  
+  // Check for specific ethnicity mentions
+  if (requests.includes('japanese') || requests.includes('asian girl') || requests.includes('asian woman')) {
+    return { 
+      gender: "woman", 
+      ethnicity: "Japanese", 
+      hair: "long black", 
+      age: 24 
+    };
+  }
+  
+  if (requests.includes('korean') || requests.includes('k-pop')) {
+    return { 
+      gender: "woman", 
+      ethnicity: "Korean", 
+      hair: "straight black", 
+      age: 23 
+    };
+  }
+  
+  if (requests.includes('chinese')) {
+    return { 
+      gender: "woman", 
+      ethnicity: "Chinese", 
+      hair: "long black", 
+      age: 25 
+    };
+  }
+  
+  if (requests.includes('latina') || requests.includes('hispanic girl') || requests.includes('mexican')) {
+    return { 
+      gender: "woman", 
+      ethnicity: "Latina", 
+      hair: "wavy brown", 
+      age: 24 
+    };
+  }
+  
+  if (requests.includes('african american') || requests.includes('black girl') || requests.includes('black woman')) {
+    return { 
+      gender: "woman", 
+      ethnicity: "African American", 
+      hair: "natural textured", 
+      age: 24 
+    };
+  }
+  
+  if (requests.includes('middle eastern') || requests.includes('arab')) {
+    return { 
+      gender: "woman", 
+      ethnicity: "Middle Eastern", 
+      hair: "long straight", 
+      age: 25 
+    };
+  }
+  
+  // Check for age specifications
+  const ageMatch = requests.match(/age\s*(\d+)/);
+  if (ageMatch) {
+    const age = parseInt(ageMatch[1]);
+    if (age >= 18 && age <= 35) {
+      return { 
+        gender: "woman", 
+        ethnicity: "Mixed", 
+        hair: "shoulder length", 
+        age: age 
+      };
+    }
+  }
+  
+  return null;
+}
+
 function getRandomEmotion(): string {
   const emotions = ['excited', 'surprised', 'delighted', 'amazed', 'thrilled', 'pleased'];
   return emotions[Math.floor(Math.random() * emotions.length)];
@@ -110,24 +188,24 @@ function getRandomEmotion(): string {
 
 function getSceneAction(sceneIndex: number): string {
   const actions = [
-    'holding product and taking first sip',
-    'examining product label with interest',
-    'showing product to camera enthusiastically',
-    'comparing with another product',
-    'opening product packaging',
-    'sharing product with friend'
+    'smiling brightly and holding product next to face',
+    'examining product label with genuine interest and smile',
+    'showing product to camera with enthusiastic smile',
+    'holding product with both hands and beaming smile',
+    'displaying product proudly with natural smile',
+    'holding product close while smiling authentically'
   ];
   return actions[sceneIndex % actions.length];
 }
 
 function getVideoAction(sceneIndex: number): string {
   const actions = [
-    'taking first taste reaction',
-    'explaining product benefits',
-    'showing product features',
-    'demonstrating product use',
-    'sharing personal experience',
-    'recommending to viewers'
+    'holding product and smiling while explaining',
+    'explaining product benefits with genuine enthusiasm',
+    'showing product features while smiling',
+    'demonstrating product presentation with smile',
+    'sharing personal experience while holding product',
+    'recommending to viewers with authentic smile'
   ];
   return actions[sceneIndex % actions.length];
 }

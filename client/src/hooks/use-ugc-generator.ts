@@ -12,6 +12,7 @@ interface UseUGCGeneratorProps {
   dialogue: string;
   dialogues: string[];
   model: string;
+  imageModel: string;
   imageAspectRatio: string;
   videoAspectRatio: string;
   specialRequests: string;
@@ -73,6 +74,7 @@ export function useUGCGenerator(props: UseUGCGeneratorProps) {
         dialogue: props.dialogue,
         dialogues: props.dialogues,
         model: props.model,
+        imageModel: props.imageModel,
         imageAspectRatio: props.imageAspectRatio,
         videoAspectRatio: props.videoAspectRatio,
         specialRequests: props.specialRequests,
@@ -98,7 +100,7 @@ export function useUGCGenerator(props: UseUGCGeneratorProps) {
       // Process each scene
       for (let i = 0; i < props.sceneCount; i++) {
         try {
-          await processScene(i, prompts.scenes[i], kieAPI, props.referenceImage);
+          await processScene(i, prompts.scenes[i], kieAPI, props.referenceImage, props.imageModel);
         } catch (error) {
           console.error(`Failed to process scene ${i + 1}:`, error);
           // Continue with other scenes even if one fails
@@ -129,6 +131,7 @@ export function useUGCGenerator(props: UseUGCGeneratorProps) {
         dialogue: props.dialogue,
         dialogues: props.dialogues,
         model: props.model,
+        imageModel: props.imageModel,
         imageAspectRatio: props.imageAspectRatio,
         videoAspectRatio: props.videoAspectRatio,
         specialRequests: props.specialRequests,
@@ -174,7 +177,8 @@ async function processScene(
   sceneIndex: number,
   scenePrompt: any,
   kieAPI: KieAPI,
-  referenceImage: string
+  referenceImage: string,
+  imageModel: string
 ) {
   const sceneId = sceneIndex + 1;
 
@@ -192,7 +196,7 @@ async function processScene(
       prompt: imagePromptString,
       filesUrl: [referenceImage],
       size: scenePrompt.aspect_ratio_image
-    });
+    }, imageModel);
 
     console.log(`Image generated for scene ${sceneId}:`, imageUrl);
 

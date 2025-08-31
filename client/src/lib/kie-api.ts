@@ -48,7 +48,7 @@ export class KieAPI {
     this.mockMode = mockMode;
   }
 
-  async generateImage(request: ImageGenerationRequest): Promise<string> {
+  async generateImage(request: ImageGenerationRequest, imageModel: string = 'gpt4o-image'): Promise<string> {
     if (this.mockMode) {
       return this.mockImageGeneration();
     }
@@ -56,7 +56,10 @@ export class KieAPI {
     // Convert Google Drive URLs
     const processedUrls = request.filesUrl.map(url => convertGoogleDriveUrl(url));
 
-    const response = await fetch(`${this.baseUrl}/gpt4o-image/generate`, {
+    // Choose endpoint based on model
+    const endpoint = imageModel === 'flux-kontext' ? 'flux' : 'gpt4o-image';
+    
+    const response = await fetch(`${this.baseUrl}/${endpoint}/generate`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${this.apiKey}`,
