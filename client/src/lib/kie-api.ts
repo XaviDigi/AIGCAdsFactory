@@ -119,7 +119,7 @@ export class KieAPI {
   }
 
   private async pollImageStatus(taskId: string): Promise<string> {
-    const maxAttempts = 40;
+    const maxAttempts = 100; // About 5 minutes
     const pollInterval = 3000; // 3 seconds
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
@@ -152,7 +152,7 @@ export class KieAPI {
   }
 
   private async pollVideoStatus(taskId: string): Promise<string> {
-    const maxAttempts = 60;
+    const maxAttempts = 120; // About 10 minutes (videos take longer)
     const pollInterval = 5000; // 5 seconds
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {

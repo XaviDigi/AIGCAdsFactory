@@ -28,7 +28,7 @@ interface UGCStore {
 let globalStore: UGCStore = {
   scenes: [],
   prompts: null,
-  sceneCount: 3,
+  sceneCount: 1,
   isGenerating: false
 };
 
