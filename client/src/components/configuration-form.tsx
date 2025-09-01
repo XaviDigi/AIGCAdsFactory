@@ -24,6 +24,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
   const [imageAspectRatio, setImageAspectRatio] = useState("3:2");
   const [videoAspectRatio, setVideoAspectRatio] = useState("16:9");
   const [specialRequests, setSpecialRequests] = useState("");
+  const [specialRequestsPerScene, setSpecialRequestsPerScene] = useState<string[]>([]);
   const [productHint, setProductHint] = useState("");
   const { toast } = useToast();
 
@@ -68,6 +69,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
     imageAspectRatio,
     videoAspectRatio,
     specialRequests,
+    specialRequestsPerScene: sceneCount > 1 ? specialRequestsPerScene : undefined,
     productHint
   });
 
@@ -100,7 +102,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
     "Everyone keeps asking me where I got this"
   ];
 
-  // Update dialogues array when scene count changes
+  // Update dialogues and special requests arrays when scene count changes
   useEffect(() => {
     if (sceneCount > 1) {
       const newDialogues = [...dialogues];
@@ -111,6 +113,14 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
       // Remove excess dialogues
       newDialogues.splice(sceneCount);
       setDialogues(newDialogues);
+      
+      // Update special requests per scene
+      const newSpecialRequests = [...specialRequestsPerScene];
+      while (newSpecialRequests.length < sceneCount) {
+        newSpecialRequests.push("");
+      }
+      newSpecialRequests.splice(sceneCount);
+      setSpecialRequestsPerScene(newSpecialRequests);
     }
   }, [sceneCount]);
 
@@ -328,22 +338,56 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
 
         {/* Special Requests */}
         <div>
-          <Label htmlFor="specialRequests" className="block text-sm font-medium mb-2">
-            ✨ Special Requests (please specify the gender of the ugc)
-          </Label>
-          <Textarea
-            id="specialRequests"
-            rows={3}
-            value={specialRequests}
-            onChange={(e) => handleSpecialRequestsUpdate(e.target.value)}
-            placeholder="Age 21-29, diversity preferences, scene hints (podcast, car, mirror, walking, shades, beach, street interview)"
-            className="resize-none"
-            data-testid="textarea-special-requests"
-          />
-          <p className="text-xs text-muted-foreground mt-1 flex items-center">
-            <Tag className="w-3 h-3 mr-1" />
-            Optional scene and actor preferences
-          </p>
+          {sceneCount === 1 ? (
+            // Single special request for 1 scene
+            <>
+              <Label htmlFor="specialRequests" className="block text-sm font-medium mb-2">
+                ✨ Special Requests (please specify the gender of the ugc)
+              </Label>
+              <Textarea
+                id="specialRequests"
+                rows={3}
+                value={specialRequests}
+                onChange={(e) => handleSpecialRequestsUpdate(e.target.value)}
+                placeholder="a male white ninja with mask on, in the living room - Age 21-29, diversity preferences, scene hints"
+                className="resize-none"
+                data-testid="textarea-special-requests"
+              />
+              <p className="text-xs text-muted-foreground mt-1 flex items-center">
+                <Tag className="w-3 h-3 mr-1" />
+                Character appearance, costume, setting, and actor preferences
+              </p>
+            </>
+          ) : (
+            // Multiple special requests for multiple scenes
+            <div className="space-y-4">
+              <Label className="block text-sm font-medium">✨ Special Requests per Scene (please specify the gender of the ugc)</Label>
+              {specialRequestsPerScene.slice(0, sceneCount).map((sceneSpecialRequest, index) => (
+                <div key={index}>
+                  <Label htmlFor={`specialRequest-${index}`} className="block text-xs font-medium mb-1 text-muted-foreground">
+                    🎬 Scene {index + 1} Special Requests
+                  </Label>
+                  <Textarea
+                    id={`specialRequest-${index}`}
+                    rows={2}
+                    value={sceneSpecialRequest}
+                    onChange={(e) => {
+                      const newSpecialRequests = [...specialRequestsPerScene];
+                      newSpecialRequests[index] = e.target.value;
+                      setSpecialRequestsPerScene(newSpecialRequests);
+                    }}
+                    placeholder={`Scene ${index + 1}: a male ninja in the living room, age 25...`}
+                    className="resize-none"
+                    data-testid={`textarea-special-request-${index}`}
+                  />
+                </div>
+              ))}
+              <p className="text-xs text-muted-foreground flex items-center">
+                <Tag className="w-3 h-3 mr-1" />
+                Character appearance, costume, setting per scene
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Product/Brand Hint */}

@@ -16,6 +16,7 @@ interface UseUGCGeneratorProps {
   imageAspectRatio: string;
   videoAspectRatio: string;
   specialRequests: string;
+  specialRequestsPerScene?: string[];
   productHint: string;
 }
 
@@ -78,6 +79,7 @@ export function useUGCGenerator(props: UseUGCGeneratorProps) {
         imageAspectRatio: props.imageAspectRatio,
         videoAspectRatio: props.videoAspectRatio,
         specialRequests: props.specialRequests,
+        specialRequestsPerScene: props.specialRequestsPerScene,
         productHint: props.productHint
       });
 
@@ -135,6 +137,7 @@ export function useUGCGenerator(props: UseUGCGeneratorProps) {
         imageAspectRatio: props.imageAspectRatio,
         videoAspectRatio: props.videoAspectRatio,
         specialRequests: props.specialRequests,
+        specialRequestsPerScene: props.specialRequestsPerScene,
         productHint: props.productHint
       });
 

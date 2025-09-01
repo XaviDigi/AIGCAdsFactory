@@ -9,6 +9,7 @@ interface PromptBuilderOptions {
   imageAspectRatio: string;
   videoAspectRatio: string;
   specialRequests: string;
+  specialRequestsPerScene?: string[];
   productHint: string;
 }
 
@@ -39,11 +40,17 @@ export function buildPrompts(options: PromptBuilderOptions): UGCPrompts {
     { gender: "man", ethnicity: "Mixed race", hair: "short fade", age: 29 }
   ];
 
-  // Parse special requests for scene hints and character overrides
-  const sceneHints = extractSceneHints(options.specialRequests);
-  const characterOverride = extractCharacterOverride(options.specialRequests);
-  
   for (let i = 0; i < options.sceneCount; i++) {
+    // Use per-scene special requests if available, otherwise use global special requests
+    const currentSpecialRequests = options.specialRequestsPerScene && options.specialRequestsPerScene[i] 
+      ? options.specialRequestsPerScene[i] 
+      : options.specialRequests;
+    
+    // Parse special requests for scene hints and character overrides
+    const sceneHints = extractSceneHints(currentSpecialRequests);
+    const characterOverride = extractCharacterOverride(currentSpecialRequests);
+    const costumeDetails = extractCostumeDetails(currentSpecialRequests);
+    
     const actor = characterOverride || actorDescriptors[i % actorDescriptors.length];
     const setting = sceneHints.length > 0 
       ? sceneHints[i % sceneHints.length] 
@@ -59,7 +66,7 @@ export function buildPrompts(options: PromptBuilderOptions): UGCPrompts {
       image_prompt: {
         emotion: getRandomEmotion(),
         action: getSceneAction(i),
-        character: `Young ${actor.gender}, ${actor.age}, ${actor.hair} hair, ${actor.ethnicity}, casual mobile selfie`,
+        character: `Young ${actor.gender}, ${actor.age}, ${actor.hair} hair, ${actor.ethnicity}${costumeDetails ? `, ${costumeDetails}` : ''}, casual mobile selfie`,
         setting: setting,
         camera: "Amateur mobile front camera, slightly off-center framing, casual handheld",
         style: "UGC realism, authentic imperfections, natural lighting, slightly blurry amateur quality"
@@ -69,7 +76,7 @@ export function buildPrompts(options: PromptBuilderOptions): UGCPrompts {
         emotion: "natural enthusiasm",
         voice_type: `casual conversational ${actor.gender === 'woman' ? 'female' : 'male'}`,
         action: getVideoAction(i),
-        character: `Same as image - Young ${actor.gender}, ${actor.age}, ${actor.ethnicity}`,
+        character: `Same as image - Young ${actor.gender}, ${actor.age}, ${actor.ethnicity}${costumeDetails ? `, ${costumeDetails}` : ''}`,
         setting: `Same as image - ${setting}`,
         camera: "Handheld phone video, natural movement, amateur mobile quality"
       },
@@ -102,6 +109,10 @@ function extractSceneHints(specialRequests: string): string[] {
   if (requests.includes('shades')) hints.push('Outdoor setting wearing sunglasses');
   if (requests.includes('beach')) hints.push('Beach setting with ocean background');
   if (requests.includes('street interview')) hints.push('Urban street interview setting');
+  if (requests.includes('living room')) hints.push('Cozy living room with warm ambient lighting');
+  if (requests.includes('kitchen')) hints.push('Modern kitchen with natural lighting');
+  if (requests.includes('bedroom')) hints.push('Bedroom with soft natural lighting');
+  if (requests.includes('office')) hints.push('Office space with professional lighting');
   
   return hints;
 }
@@ -184,6 +195,23 @@ function extractCharacterOverride(specialRequests: string): any | null {
   }
   
   return null;
+}
+
+function extractCostumeDetails(specialRequests: string): string | null {
+  const requests = specialRequests.toLowerCase();
+  const details = [];
+  
+  if (requests.includes('ninja')) details.push('wearing ninja outfit');
+  if (requests.includes('mask')) details.push('wearing mask');
+  if (requests.includes('costume')) details.push('in costume');
+  if (requests.includes('uniform')) details.push('in uniform');
+  if (requests.includes('suit')) details.push('wearing suit');
+  if (requests.includes('hoodie')) details.push('wearing hoodie');
+  if (requests.includes('glasses')) details.push('wearing glasses');
+  if (requests.includes('hat')) details.push('wearing hat');
+  if (requests.includes('cap')) details.push('wearing cap');
+  
+  return details.length > 0 ? details.join(', ') : null;
 }
 
 function getRandomEmotion(): string {
