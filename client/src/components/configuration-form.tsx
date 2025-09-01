@@ -6,7 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { useUGCGenerator } from "@/hooks/use-ugc-generator";
-import { Sliders, Info, MessageSquareMore, Tag, Play, Copy } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Sliders, Info, MessageSquareMore, Tag, Play } from "lucide-react";
 
 interface ConfigurationFormProps {
   apiKey: string;
@@ -24,6 +25,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
   const [videoAspectRatio, setVideoAspectRatio] = useState("16:9");
   const [specialRequests, setSpecialRequests] = useState("");
   const [productHint, setProductHint] = useState("");
+  const { toast } = useToast();
 
   // Load saved values from localStorage on component mount
   useEffect(() => {
@@ -127,6 +129,16 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
       setDialogue("This is amazing... you have to try this!");
     }
     
+    // Show feedback to user
+    const toastMessage = sceneCount === 1 
+      ? "🎬 Generating your UGC scene! This may take a few minutes..."
+      : `🎬 Generating ${sceneCount} UGC scenes! This may take a few minutes...`;
+    
+    toast({
+      title: "Generation Started",
+      description: toastMessage,
+    });
+    
     generateScenes();
   };
 
@@ -184,7 +196,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
             // Single dialogue for 1 scene
             <>
               <Label htmlFor="dialogue" className="block text-sm font-medium mb-2">
-                💬 Dialogue
+                💬 Dialogue (add 3 dots for a break ...)
               </Label>
               <Textarea
                 id="dialogue"
@@ -209,7 +221,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
           ) : (
             // Multiple dialogues for multiple scenes
             <div className="space-y-4">
-              <Label className="block text-sm font-medium">💬 Dialogues</Label>
+              <Label className="block text-sm font-medium">💬 Dialogues (add 3 dots for a break ...)</Label>
               {dialogues.slice(0, sceneCount).map((sceneDialogue, index) => (
                 <div key={index}>
                   <Label htmlFor={`dialogue-${index}`} className="block text-xs font-medium mb-1 text-muted-foreground">
@@ -317,7 +329,7 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
         {/* Special Requests */}
         <div>
           <Label htmlFor="specialRequests" className="block text-sm font-medium mb-2">
-            ✨ Special Requests
+            ✨ Special Requests (please specify the gender of the ugc)
           </Label>
           <Textarea
             id="specialRequests"
@@ -373,14 +385,6 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
             )}
           </Button>
           
-          <Button
-            variant="outline"
-            onClick={copyPromptsJSON}
-            data-testid="button-copy-json"
-          >
-            <Copy className="w-4 h-4 mr-2" />
-            Copy JSON
-          </Button>
         </div>
       </CardContent>
     </Card>

@@ -7,12 +7,14 @@ export function OutputsPanel() {
   const { scenes } = useUGCStore();
 
   const handleDownload = (url: string, filename: string) => {
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Open in about:blank page for download
+    const newWindow = window.open('about:blank', '_blank');
+    if (newWindow) {
+      newWindow.location.href = url;
+    } else {
+      // Fallback if popup is blocked
+      window.open(url, '_blank');
+    }
   };
 
   const scenesWithContent = scenes.filter(scene => 
