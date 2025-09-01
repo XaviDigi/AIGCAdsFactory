@@ -301,7 +301,6 @@ export function ConfigurationForm({ apiKey, mockMode }: ConfigurationFormProps) 
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="gpt4o-image">4o Image (Recommended)</SelectItem>
-                <SelectItem value="flux-kontext">Flux Kontext</SelectItem>
               </SelectContent>
             </Select>
           </div>

@@ -120,13 +120,26 @@ function extractSceneHints(specialRequests: string): string[] {
 function extractCharacterOverride(specialRequests: string): any | null {
   const requests = specialRequests.toLowerCase();
   
-  // First determine gender
+  // First determine gender - prioritize explicit gender terms
   let gender = "woman"; // default
-  if (requests.includes('male') || requests.includes('man') || requests.includes('guy') || 
-      requests.includes('boy') || requests.includes('ninja') || requests.includes('dude') ||
-      requests.includes('gentleman') || requests.includes('father') || requests.includes('dad') ||
-      requests.includes('husband') || requests.includes('boyfriend')) {
+  
+  // Check for explicit female terms first
+  if (requests.includes('woman') || requests.includes('female') || requests.includes('girl') || 
+      requests.includes('lady') || requests.includes('wife') || requests.includes('girlfriend') ||
+      requests.includes('mother') || requests.includes('mom') || requests.includes('daughter')) {
+    gender = "woman";
+  }
+  // Then check for explicit male terms
+  else if (requests.includes('male') || requests.includes('man') || requests.includes('guy') || 
+           requests.includes('boy') || requests.includes('dude') || requests.includes('gentleman') || 
+           requests.includes('father') || requests.includes('dad') || requests.includes('husband') || 
+           requests.includes('boyfriend')) {
     gender = "man";
+  }
+  // Only use costume-based gender hints if no explicit gender is specified
+  else if (!requests.includes('woman') && !requests.includes('female') && !requests.includes('girl') && 
+           !requests.includes('lady') && requests.includes('ninja')) {
+    gender = "man"; // ninja defaults to male if no explicit gender
   }
   
   // Then determine ethnicity and other characteristics
