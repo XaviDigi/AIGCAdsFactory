@@ -109,73 +109,78 @@ function extractSceneHints(specialRequests: string): string[] {
 function extractCharacterOverride(specialRequests: string): any | null {
   const requests = specialRequests.toLowerCase();
   
-  // Check for specific ethnicity mentions
-  if (requests.includes('japanese') || requests.includes('asian girl') || requests.includes('asian woman')) {
-    return { 
-      gender: "woman", 
-      ethnicity: "Japanese", 
-      hair: "long black", 
-      age: 24 
-    };
+  // First determine gender
+  let gender = "woman"; // default
+  if (requests.includes('male') || requests.includes('man') || requests.includes('guy') || 
+      requests.includes('boy') || requests.includes('ninja') || requests.includes('dude') ||
+      requests.includes('gentleman') || requests.includes('father') || requests.includes('dad') ||
+      requests.includes('husband') || requests.includes('boyfriend')) {
+    gender = "man";
   }
   
-  if (requests.includes('korean') || requests.includes('k-pop')) {
-    return { 
-      gender: "woman", 
-      ethnicity: "Korean", 
-      hair: "straight black", 
-      age: 23 
-    };
-  }
+  // Then determine ethnicity and other characteristics
+  let ethnicity = "Caucasian";
+  let hair = gender === "man" ? "short styled" : "shoulder length";
+  let age = 25;
   
-  if (requests.includes('chinese')) {
-    return { 
-      gender: "woman", 
-      ethnicity: "Chinese", 
-      hair: "long black", 
-      age: 25 
-    };
-  }
-  
-  if (requests.includes('latina') || requests.includes('hispanic girl') || requests.includes('mexican')) {
-    return { 
-      gender: "woman", 
-      ethnicity: "Latina", 
-      hair: "wavy brown", 
-      age: 24 
-    };
-  }
-  
-  if (requests.includes('african american') || requests.includes('black girl') || requests.includes('black woman')) {
-    return { 
-      gender: "woman", 
-      ethnicity: "African American", 
-      hair: "natural textured", 
-      age: 24 
-    };
-  }
-  
-  if (requests.includes('middle eastern') || requests.includes('arab')) {
-    return { 
-      gender: "woman", 
-      ethnicity: "Middle Eastern", 
-      hair: "long straight", 
-      age: 25 
-    };
+  // Specific ethnicity detection
+  if (requests.includes('japanese')) {
+    ethnicity = "Japanese";
+    hair = gender === "man" ? "black short" : "long black";
+    age = 24;
+  } else if (requests.includes('korean') || requests.includes('k-pop')) {
+    ethnicity = "Korean";
+    hair = gender === "man" ? "black styled" : "straight black";
+    age = 23;
+  } else if (requests.includes('chinese')) {
+    ethnicity = "Chinese";
+    hair = gender === "man" ? "black short" : "long black";
+    age = 25;
+  } else if (requests.includes('latina') || requests.includes('hispanic') || requests.includes('mexican')) {
+    ethnicity = "Latina";
+    hair = gender === "man" ? "dark short" : "wavy brown";
+    age = 24;
+  } else if (requests.includes('african american') || requests.includes('black')) {
+    ethnicity = "African American";
+    hair = gender === "man" ? "short fade" : "natural textured";
+    age = 24;
+  } else if (requests.includes('middle eastern') || requests.includes('arab')) {
+    ethnicity = "Middle Eastern";
+    hair = gender === "man" ? "dark short" : "long straight";
+    age = 25;
+  } else if (requests.includes('asian')) {
+    ethnicity = "Asian";
+    hair = gender === "man" ? "black styled" : "long black";
+    age = 24;
+  } else if (requests.includes('white') || requests.includes('caucasian')) {
+    ethnicity = "Caucasian";
+    hair = gender === "man" ? "brown short" : "blonde wavy";
+    age = 26;
   }
   
   // Check for age specifications
   const ageMatch = requests.match(/age\s*(\d+)/);
   if (ageMatch) {
-    const age = parseInt(ageMatch[1]);
-    if (age >= 18 && age <= 35) {
-      return { 
-        gender: "woman", 
-        ethnicity: "Mixed", 
-        hair: "shoulder length", 
-        age: age 
-      };
+    const specifiedAge = parseInt(ageMatch[1]);
+    if (specifiedAge >= 18 && specifiedAge <= 35) {
+      age = specifiedAge;
     }
+  }
+  
+  // Only return override if we detected something specific
+  if (requests.includes('male') || requests.includes('man') || requests.includes('guy') || 
+      requests.includes('ninja') || requests.includes('japanese') || requests.includes('korean') ||
+      requests.includes('chinese') || requests.includes('latina') || requests.includes('hispanic') ||
+      requests.includes('african american') || requests.includes('black') || 
+      requests.includes('middle eastern') || requests.includes('arab') || requests.includes('asian') ||
+      requests.includes('white') || requests.includes('caucasian') || ageMatch) {
+    
+    return { 
+      gender: gender, 
+      ethnicity: ethnicity, 
+      hair: hair, 
+      age: age 
+    };
   }
   
   return null;
