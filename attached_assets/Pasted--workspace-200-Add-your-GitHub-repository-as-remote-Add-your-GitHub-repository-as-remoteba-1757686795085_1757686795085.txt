@@ -1,0 +1,52 @@
+~/workspace$ ^[[200~# Add your GitHub repository as remote
+# Add your GitHub repository as remotebash: #: command not found
+~/workspace$ git remote add origin https://github.com/XaviDigi/UGC.git
+error: could not lock config file .git/config: File exists
+fatal: could not set 'remote.origin.url' to 'https://github.com/XaviDigi/UGC.git'
+~/workspace$ 
+~/workspace$ # Add all your files
+~/workspace$ git add .
+~/workspace$ 
+~/workspace$ # Commit your changes
+~/workspace$ git commit -m "AI UGC Ads Factory - Production ready UGC generator with enhanced character detection"
+On branch main
+nothing to commit, working tree clean
+~/workspace$ 
+~/workspace$ # Push to GitHub
+~/workspace$ git push -u origin main~
+fatal: invalid refspec 'main~'
+~/workspace$ ^[[200~# Add your GitHub repository as remote
+# Add your GitHub repository as remotebash: #: command not found
+~/workspace$ git remote add origin https://github.com/XaviDigi/UGC.git
+error: could not lock config file .git/config: File exists
+fatal: could not set 'remote.origin.url' to 'https://github.com/XaviDigi/UGC.git'
+~/workspace$ 
+~/workspace$ # Add all your files
+~/workspace$ git add .
+~/workspace$ 
+~/workspace$ # Commit your changes
+~/workspace$ git commit -m "AI UGC Ads Factory - Production ready UGC generator with enhanced character detection"
+On branch main
+nothing to commit, working tree clean
+~/workspace$ 
+~/workspace$ # Push to GitHub
+~/workspace$ git push -u origin main
+fatal: 'origin' does not appear to be a git repository
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+~/workspace$ git remote add origin https://github.com/XaviDigi/UGC.git
+error: could not lock config file .git/config: File exists
+fatal: could not set 'remote.origin.url' to 'https://github.com/XaviDigi/UGC.git'
+~/workspace$ ^[[200~git init~
+git init~bash: git: command not found
+~/workspace$ git init
+error: could not lock config file /home/runner/workspace/.git/config: File exists
+error: could not lock config file /home/runner/workspace/.git/config: File exists
+error: could not lock config file /home/runner/workspace/.git/config: File exists
+fatal: could not set 'core.repositoryformatversion' to '0'
+~/workspace$ git remote add origin https://github.com/XaviDigi/UGC.git
+error: could not lock config file .git/config: File exists
+fatal: could not set 'remote.origin.url' to 'https://github.com/XaviDigi/UGC.git'
+~/workspace$ 
